@@ -63,7 +63,7 @@ def get_statistics_of_raster(ds, all_records):
                 area = A * abs((log2 - log1) * (sin(lat2*pi/180) - sin(lat1*pi/180)))
                 stats_area[country_code] = stats_area[country_code] + area
                 if value <= 0:
-                    continue;
+                    continue
                 # if value < 0:
                 #    print("value <0 (%d,%d) %f country(%d)" % (i,j,value,country_code))
                 #    exit(1)
@@ -117,17 +117,17 @@ class SQL:
     def fetchRasterFilenames(self):
         try:
             fileBatch_query_str = '''SELECT raster_file_name
-                                    FROM proj_processing_status_vcm_0 
+                                    FROM proj_processing_status_vcmsl_0 
                                     WHERE ready_to_process = 1 AND processed_bool = 0;'''
             fileBatch = self.query('get filename batch', fileBatch_query_str)
             return fileBatch
         except sqlite3.Error as e:
-            print ("Sqlite3 Error %d: %s" % (e.args[0])) 
+            print ("Sqlite3 Error %s" % (e.args[0])) 
 
     def process(self,country_names_valid,stats_valid,fname):
         year_month = pd.DataFrame()
         try:
-            ym_query_str = '''SELECT `year_month` FROM proj_processing_status_vcm_0 
+            ym_query_str = '''SELECT `year_month` FROM proj_processing_status_vcmsl_0 
                                 WHERE raster_file_name = "%s";''' % fname
             year_month = self.query('get year_month', ym_query_str)
 
@@ -139,7 +139,7 @@ class SQL:
         for i in range(len(country_names_valid)):
             
             varlist = [country_names_valid[i], int_year_month, stats_valid[i][0], stats_valid[i][1], fname]
-            insert_query_str = '''INSERT INTO proj_country_data_vcm_0 
+            insert_query_str = '''INSERT INTO proj_country_data_vcmsl_0 
                                     VALUES ("%s", %d, %f, %f, "%s");''' \
                     % (varlist[0],varlist[1],varlist[2],varlist[3],varlist[4]) # prevent duplicate
             
@@ -152,7 +152,7 @@ class SQL:
         print ("finished writing", fname)
 
         # change processing status
-        change_status_str = '''UPDATE proj_processing_status_vcm_0 SET processed_bool = 1
+        change_status_str = '''UPDATE proj_processing_status_vcmsl_0 SET processed_bool = 1
                                     WHERE raster_file_name = "%s";''' % fname
         try:
             self.execute('change processed_bool',change_status_str)
@@ -189,7 +189,7 @@ if __name__ == '__main__':
 
         ### read raster file ###
 
-        ds = gdal.Open("Dataset20km/"+_tif_filename)
+        ds = gdal.Open("Dataset20kmVCMSL/"+_tif_filename)
 
         ### Statistics ###
 
