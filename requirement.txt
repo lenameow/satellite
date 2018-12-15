@@ -1,0 +1,4 @@
+gdal=2.3.1=py36hb00a9d7_0
+libgdal=2.3.1=ha6e4b24_0
+pyshp=1.2.12=py_0
+shapely=1.6.4=py36h164cb2d_1
